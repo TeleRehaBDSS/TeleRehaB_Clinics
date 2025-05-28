@@ -26,11 +26,6 @@ from UDPClient import SendMyIP
 from websocketServer import run_websocket_server
 from pathlib import Path
 
-
-DEMO_TOPIC = "exercise/demo"
-MSG_TOPIC = "exercise/msg"
-EXIT_TOPIC = "exercise/exit"
-
 # Get the directory where the script is located
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH_2 = BASE_DIR / 'clinic.ini'
@@ -39,6 +34,12 @@ config = configparser.ConfigParser()
 config.read(CONFIG_PATH_2)
 # Get clinic_id and strip quotes
 clinic_id = config.get("CLINIC", "clinic_id").strip('"')
+
+DEMO_TOPIC = f"exercise{clinic_id}/demo"
+MSG_TOPIC = "exercise{clinic_id}/msg"
+EXIT_TOPIC = "exercise{clinic_id}/exit"
+
+
 # Construct the paths for config and logo
 CONFIG_PATH = BASE_DIR / 'config.ini'
 TOPIC_PING = "healthcheck/AREYOUALIVE"

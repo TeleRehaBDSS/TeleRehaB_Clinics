@@ -4,6 +4,17 @@ import time
 from datetime import datetime
 import FindMyIP as ip
 import multiprocessing as mp
+import configparser
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+# Construct the paths for config and logo
+CONFIG_PATH_2 = BASE_DIR / 'clinic.ini'
+# Load config
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH_2)
+# Get clinic_id and strip quotes
+clinic_id = config.get("CLINIC", "clinic_id").strip('"')
 
 # MQTT Configuration
 local_ip = ip.internal()
@@ -13,9 +24,9 @@ MQTT_BROKER_PORT = 1883
 MQTT_KEEP_ALIVE_INTERVAL = 60
 
 # Topics
-DEMO_TOPIC = "exercise/demo"
-MSG_TOPIC = "exercise/msg"
-EXIT_TOPIC = "exercise/exit"
+DEMO_TOPIC = f"exercise{clinic_id}/demo"
+MSG_TOPIC = f"exercise{clinic_id}/msg"
+EXIT_TOPIC = f"exercise{clinic_id}/exit"
 IAMALIVETOPIC = "iamalive_topic"
 
 # Global Flags
