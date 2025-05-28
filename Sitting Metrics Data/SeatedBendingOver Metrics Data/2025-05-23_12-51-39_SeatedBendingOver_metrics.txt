@@ -1,0 +1,12 @@
+total_metrics:
+  number_of_movements: 8
+  movement_mean_time: 2.1114285714285717
+  movement_std_time: 0.5721994799874945
+  range_mean_degrees: 19.27656881160176
+  range_std_degrees: 13.689980660679693
+  chin_to_chest_mean_time: 0.8266666666666667
+  chin_to_chest_std_time: 0.4558021013066477
+  chest_to_chin_mean_time: 0.9033333333333334
+  chest_to_chin_std_time: 0.363532055746884
+  exercise_duration_seconds: 16.14
+

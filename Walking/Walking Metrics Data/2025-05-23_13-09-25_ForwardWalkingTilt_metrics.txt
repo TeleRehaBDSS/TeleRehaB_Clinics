@@ -1,0 +1,23 @@
+total_metrics:
+  total_metrics_head:
+    number_of_movements: 8
+    pace_movements_per_second: 0.46003450258769407
+    mean_range_degrees: 37.044922805086706
+    std_range_degrees: 17.570813745732384
+    mean_duration_seconds: 0.7625
+    std_duration_seconds: 0.12349089035228471
+
+  Gait Cycle:
+    total_steps: 0
+    stride_times: [1.08, 1.05, 1.47, 1.32, 1.09]
+    cadence: 0.0
+    left_stance_times: [0.4, 0.43, 0.27, 0.32, 0.26, 0.78, 0.82, 0.29]
+    right_stance_times: [0.26, 0.24, 0.26, 0.25, 0.22, 0.21, 0.62, 0.77]
+    left_swing_times: [0.24, 0.26, 0.25, 0.22, 0.21, 0.82, 0.62]
+    right_swing_times: [0.4, 0.26, 0.43, 0.27, 0.32, 0.26, 0.78, 0.29, 0.77]
+    double_support_times: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    single_support_times: [0.4, 0.43, 0.27, 0.32, 0.26, 0.78, 0.82, 0.29]
+    exercise_duration_seconds: 17.39
+    mean_stride_time: 1.202
+    std_stride_time: 0.1650939126679115
+

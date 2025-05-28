@@ -1,0 +1,17 @@
+total_metrics:
+  LEFT LEG:
+    number_of_movements: 28
+    pace_movements_per_second: 1.6091954022988504
+    mean_combined_range_degrees: 0.44677140380727187
+    mean_duration_seconds: 0.6107142857142858
+    exercise_duration_seconds: 17.400000000000002
+    movement_duration: 17.1
+
+  RIGHT LEG:
+    number_of_movements: 23
+    pace_movements_per_second: 1.32183908045977
+    mean_combined_range_degrees: 0.5166942544097537
+    mean_duration_seconds: 0.7217391304347827
+    exercise_duration_seconds: 17.400000000000002
+    movement_duration: 16.6
+

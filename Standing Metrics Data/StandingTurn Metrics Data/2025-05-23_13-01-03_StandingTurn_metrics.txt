@@ -1,0 +1,11 @@
+total_metrics:
+  Total Movements: 139
+  Right-to-Left (Max-to-Min) Movements: 70
+  Left-to-Right (Min-to-Max) Movements: 69
+  Mean Duration: 11.496402877697841
+  Duration Standard Deviation: 11.246341755791049
+  Mean Duration Left-to-Right (Max-to-Min): 10.085714285714285
+  Mean Duration Right-to-Left (Min-to-Max): 12.927536231884059
+  Symmetry Ratio (Left-to-Right / Right-to-Left): 0.7801729660474055
+  exercise_duration_seconds: 16.87
+

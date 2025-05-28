@@ -1,0 +1,11 @@
+total_metrics:
+  number_of_movements: 51
+  pace_movements_per_second: 2.9479768786127165
+  mean_duration_seconds: 0.31764705882352934
+  std_duration_seconds: 0.1822580398215255
+  mean_range_degrees_head: 30.933640604652663
+  std_range_degrees_head: 23.156306847309054
+  mean_range_degrees_pelvis: 34.87837785139833
+  std_range_degrees_pelvis: 22.80639182243232
+  exercise_duration: 17.3
+
