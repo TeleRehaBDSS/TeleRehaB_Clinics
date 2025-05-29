@@ -274,6 +274,7 @@ def runScenario(queueData):
     time.sleep(2)
 
     try:
+        time.sleep(2)
         set_language(client, "EN")
     except Exception as e:
         print(f"Language selection failed{e}")
@@ -400,6 +401,7 @@ def runScenario(queueData):
                 # Publish the configuration message to start the exercise
                 print('--- Starting the exercise ---')
                 if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,43]:
+                    time.sleep(3)
                     client.publish(f"TELEREHAB@{clinic_id}/IMUsettings", config_message)
                     time.sleep(2)
                     client.publish(f'TELEREHAB@{clinic_id}/StartRecording', 'START_RECORDING')
