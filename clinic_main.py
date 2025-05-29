@@ -401,9 +401,8 @@ def runScenario(queueData):
                 # Publish the configuration message to start the exercise
                 print('--- Starting the exercise ---')
                 if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,43]:
-                    time.sleep(3)
                     client.publish(f"TELEREHAB@{clinic_id}/IMUsettings", config_message)
-                    time.sleep(2)
+                    time.sleep(4)
                     client.publish(f'TELEREHAB@{clinic_id}/StartRecording', 'START_RECORDING')
                     # Start the scheduler process
                     scheduler_process = mp.Process(target=scheduler, args=(scheduleQueue,))
@@ -434,7 +433,7 @@ def runScenario(queueData):
                     scheduler_process.join()
 
                     # Stop recording after data collection is done
-                    client.publish(f'TELEREHAB@{clinic_id}/StopRecording', 'StopRecording')
+                    client.publish(f'TELEREHAB@{clinic_id}/StopRecording', 'STOP_RECORDING')
                     time.sleep(2)
 
 
@@ -588,6 +587,7 @@ def on_connect(client, userdata, flags, rc):
     logger.info("Connected to MQTT broker with result code " + str(rc))
     client.subscribe(f"TELEREHAB@{clinic_id}/IMUsettings")
     client.subscribe(f"TELEREHAB@{clinic_id}/DeviceStatus")
+    client.subscribe(f"TELEREHAB@{clinic_id}/StartRecording")
     client.subscribe(f"TELEREHAB@{clinic_id}/StopRecording")
     client.subscribe(f"TELEREHAB@{clinic_id}/TerminationTopic")
     client.subscribe(f"TELEREHAB@{clinic_id}/STARTVC")

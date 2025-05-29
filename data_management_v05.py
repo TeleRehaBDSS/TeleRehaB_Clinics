@@ -1204,7 +1204,7 @@ def receive_imu_data(q, scheduleQueue, config_message, exercise,metrics_queue):
                             print('I am calling get_data_tranch')
                             # interpolate
                             process_and_interpolate_imus(imu_data, target_rate_hz=100)  # 100 Hz target rate
-
+                            send_voice_instructions(client, "bph0083")
                             metrics,folder_path = get_data_tranch(
                                 safe_get_imu_queue(imu_data, 'HEAD', manager.Queue()),  # imu1Queue
                                 safe_get_imu_queue(imu_data, 'PELVIS', manager.Queue()),  # imu2Queue
@@ -1222,6 +1222,7 @@ def receive_imu_data(q, scheduleQueue, config_message, exercise,metrics_queue):
                             print(f"Intervals = {INTERVALS}")
 
                             if INTERVALS == 4:
+
                                 print("Processing the entire data stream...")
                                 final_metrics,folder_path = get_data_tranch(
                                     imu_data.get('HEAD', [None, None, manager.Queue()])[2],  # imu1FinalQueue

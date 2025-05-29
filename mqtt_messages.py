@@ -24,9 +24,9 @@ MQTT_BROKER_PORT = 1883
 MQTT_KEEP_ALIVE_INTERVAL = 60
 
 # Topics
-DEMO_TOPIC = f"exercise{clinic_id}/demo"
-MSG_TOPIC = f"exercise{clinic_id}/msg"
-EXIT_TOPIC = f"exercise{clinic_id}/exit"
+DEMO_TOPIC = f"exercise@{clinic_id}/demo"
+MSG_TOPIC = f"exercise@{clinic_id}/msg"
+EXIT_TOPIC = f"exercise@{clinic_id}/exit"
 IAMALIVETOPIC = "iamalive_topic"
 
 # Global Flags
