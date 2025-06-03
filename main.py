@@ -9,7 +9,7 @@ import time
 import requests
 import configparser
 from datetime import datetime
-from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg
+from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected
 from data_management_v05 import scheduler, receive_imu_data
 from api_management import login, get_device_api_key
 from scoring import give_score
@@ -259,6 +259,10 @@ def runScenario(queueData):
     # Stop recording after data collection is done
     client.publish('StopRecording', 'StopRecording')
     time.sleep(2)
+    print("Waiting for app to connect...")
+    while not app_connected.value:
+        time.sleep(1)
+    print("App connected, continuing...")
 
     try:
         set_language("EN")

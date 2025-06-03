@@ -7,6 +7,7 @@ import multiprocessing as mp
 import configparser
 from pathlib import Path
 
+app_connected = mp.Value('b', False)
 BASE_DIR = Path(__file__).resolve().parent
 # Construct the paths for config and logo
 CONFIG_PATH_2 = BASE_DIR / 'clinic.ini'
@@ -107,6 +108,9 @@ def on_message(client, userdata, msg):
             exit(0)
             
     elif msg.topic == DEMO_TOPIC:
+        if isinstance(payload, dict) and payload.get("action") == "Connected":
+            print("App has connected.")
+            app_connected.value = True
         if payload.get("action") == "ACK":
             ack_received = True
         elif payload.get("action") == "DEMO_START":
@@ -536,3 +540,6 @@ def send_message_with_speech_to_text_ctg_2(client, code, timeout=20):
 
         # No response received, retrying
         print("No response received. Retrying...")
+__all__ = [
+    'app_connected' 
+]
