@@ -74,12 +74,13 @@ def reset_global_flags():
     finish_received = False  
     finish_response = None
     ctg_received = None
+    
 
 def reset_ctg():
-    global ctg_results_data, ctg_results_received
+    global ctg_results_data, ctg_results_received,ack_ctg_received
     ctg_results_data = None
     ctg_results_received = False
-    
+    ack_ctg_received = None
 
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
@@ -88,7 +89,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    global ack_received, demo_start_received, demo_end_received, finish_received,finish_response,ctg_received,ctg_results_received,ctg_results_data
+    global ack_received, demo_start_received, demo_end_received, finish_received,finish_response,ctg_received,ctg_results_received,ctg_results_data,ack_ctg_received
     reset_global_flags()
 
     try:
@@ -113,6 +114,8 @@ def on_message(client, userdata, msg):
             app_connected.value = True
         if payload.get("action") == "ACK":
             ack_received = True
+        if payload.get("action") == "ACK_CTG":
+            ack_ctg_received = True
         elif payload.get("action") == "DEMO_START":
             demo_start_received = True
         elif payload.get("action") == "DEMO_END":
@@ -137,7 +140,7 @@ def on_message(client, userdata, msg):
 
 # Publish and Wait
 def publish_and_wait(client, topic, message, timeout=1000, wait_for="ACK"):
-    global ack_received, demo_start_received, demo_end_received, finish_received, ctg_received, ctg_results_received
+    global ack_received, demo_start_received, demo_end_received, finish_received, ctg_received, ctg_results_received,ack_ctg_received
     reset_global_flags()
 
     ack_received = demo_start_received = demo_end_received = finish_received = ctg_received =  False 
@@ -147,6 +150,8 @@ def publish_and_wait(client, topic, message, timeout=1000, wait_for="ACK"):
     start_time = time.time()
     while time.time() - start_time < timeout:
         if wait_for == "ACK" and ack_received:
+            return True
+        if wait_for == "ACK_CTG" and ack_ctg_received:
             return True
         if wait_for == "DEMO_START" and demo_start_received:
             return True
@@ -310,7 +315,7 @@ def start_exergames(client, exercise):
     }
 
 
-    while not publish_and_wait(client, DEMO_TOPIC, exergame_message, wait_for="CTG_END"):
+    while not publish_and_wait(client, DEMO_TOPIC, exergame_message, wait_for="ACK_CTG"):
         print("Waiting for CTG_END...")
     print(f"Exercise demonstration for {exercise_name} completed.")
 
