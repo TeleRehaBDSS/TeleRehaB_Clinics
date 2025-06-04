@@ -276,7 +276,6 @@ def runScenario(queueData):
     while not app_connected.value:
         time.sleep(1)
     print("App connected, continuing...")
-    
     try:
         time.sleep(2)
         set_language(client, "EN")
