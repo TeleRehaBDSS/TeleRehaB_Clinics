@@ -1437,11 +1437,11 @@ def receive_imu_data(q, scheduleQueue, config_message, exercise,metrics_queue):
                             metrics_dict = json.loads(metrics)
 
                             if (INTERVALS==1) and metrics_dict["total_metrics"]["number_of_movements"]>2:
-                                send_voice_instructions("bph0079")
+                                send_voice_instructions(client,"bph0079")
                             if (INTERVALS==2) and metrics_dict["total_metrics"]["number_of_movements"]>5:
-                                send_voice_instructions("bph0085")
+                                send_voice_instructions(client,"bph0085")
                             if (INTERVALS==3) and metrics_dict["total_metrics"]["number_of_movements"]>12:
-                                send_voice_instructions("bph0086")
+                                send_voice_instructions(client,"bph0086")
 
                             if metrics_dict["total_metrics"]["number_of_movements"] >= 20:
                                 send_voice_instructions(client, "bph0083")

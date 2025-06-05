@@ -258,6 +258,14 @@ def start_exercise_demo(client, exercise):
         exercise_name = f"VC holobalance_walking_4 P{exercise['progression']}"
     elif exercise['exerciseId'] == 43:
         exercise_name = f"VC holobalance_standing_4 P{exercise['progression']}"
+    elif exercise['exerciseId'] == 24:
+        exercise_name = f"VC holobalance_Optokinetic_1 P{exercise['progression']}"
+    elif exercise['exerciseId'] == 25:
+        exercise_name = f"VC holobalance_Optokinetic_2 P{exercise['progression']}"
+    elif exercise['exerciseId'] == 26:
+        exercise_name = f"VC holobalance_Optokinetic_3 P{exercise['progression']}"
+    elif exercise['exerciseId'] == 27:
+        exercise_name = f"VC holobalance_Optokinetic_4 P{exercise['progression']}"
 
 
     demo_message = {
