@@ -9,7 +9,7 @@ import time
 import requests
 import configparser
 from datetime import datetime
-from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected
+from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected,start_video,stop_video, reset_global_flags
 from data_management_v05 import scheduler, receive_imu_data
 from api_management import login, get_device_api_key
 from scoring import give_score
@@ -316,9 +316,11 @@ def runScenario(queueData):
 
             # Process each exercise in the schedule
             for exercise in exercises:
+                reset_global_flags()
+
                 logger.info(f"Processing Exercise ID: {exercise['exerciseId']}")
                 
-                if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,43]:
+                if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,43]:
                     try:
                         start_exercise_demo(client, exercise)
                     except Exception as e:
@@ -330,6 +332,25 @@ def runScenario(queueData):
                     except Exception as e:
                         logger.error(f"Demonstration failed for Exercise ID {exercise['exerciseId']}: {e}")
                         continue
+                elif exercise["exerciseId"] in [24,25,26,27]:
+                    try:
+                        start_exercise_demo(client, exercise)
+                    except Exception as e:
+                        logger.error(f"Demonstration failed for Exercise ID {exercise['exerciseId']}: {e}")
+                        continue
+                    time.sleep(5)
+                    send_voice_instructions(client, "bph0082")
+                    try:
+                        start_video(client, exercise)
+                    except Exception as e:
+                        logger.error(f"Demonstration failed for Exercise ID {exercise['exerciseId']}: {e}")
+                        continue
+                    time.sleep(5)
+                    try:
+                        stop_video(client, exercise)
+                    except Exception as e:
+                        logger.error(f"Demonstration failed for Exercise ID {exercise['exerciseId']}: {e}")
+                        continue    
                 else:
                     try:
                         results = start_cognitive_games(client, exercise)
@@ -403,7 +424,7 @@ def runScenario(queueData):
 
                 # Publish the configuration message to start the exercise
                 print('--- Starting the exercise ---')
-                if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,43]:
+                if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,28,29,30,31,32,33,34,35,36,43]:
                     client.publish(f"TELEREHAB@{clinic_id}/IMUsettings", config_message)
                     time.sleep(4)
                     client.publish(f'TELEREHAB@{clinic_id}/StartRecording', 'START_RECORDING')

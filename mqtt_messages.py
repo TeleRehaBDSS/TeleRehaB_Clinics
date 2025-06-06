@@ -38,6 +38,8 @@ finish_received = False
 finish_response=None
 ctg_results_received = False
 ctg_results_data = None
+video_stop = None
+video_ack = None
 iamalive_queue = mp.Queue()
 
 def wait_for_ctg_results(timeout=70):
@@ -67,20 +69,24 @@ def wait_for_ctg_results(timeout=70):
 
 # Reset all global flags and responses
 def reset_global_flags():
-    global ack_received, demo_start_received, demo_end_received, finish_received, finish_response,ctg_received
+    global ack_received, demo_start_received, demo_end_received, finish_received, finish_response,ctg_received,video_stop,video_ack, ctg_results_data, ctg_results_received,ack_ctg_received
     ack_received = False
     demo_start_received = False
     demo_end_received = False
     finish_received = False  
-    finish_response = None
-    ctg_received = None
-    
+    finish_response = False
+    ctg_received = False
+    video_stop = False
+    video_ack = False
+    ctg_results_data = False
+    ctg_results_received = False
+    ack_ctg_received = False
 
 def reset_ctg():
     global ctg_results_data, ctg_results_received,ack_ctg_received
-    ctg_results_data = None
+    ctg_results_data = False
     ctg_results_received = False
-    ack_ctg_received = None
+    ack_ctg_received = False
 
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
@@ -89,12 +95,14 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    global ack_received, demo_start_received, demo_end_received, finish_received,finish_response,ctg_received,ctg_results_received,ctg_results_data,ack_ctg_received
-    reset_global_flags()
+    global ack_received, demo_start_received, demo_end_received, finish_received,finish_response,ctg_received,ctg_results_received,ctg_results_data,ack_ctg_received,video_ack,video_stop
+    #reset_global_flags()
 
     try:
         payload = json.loads(msg.payload.decode())  # Try to parse JSON
         print(f"Received JSON message on {msg.topic}: {payload}")
+        #print("finish_received =",  finish_received)
+        #print('--------------------------------------------------------------------')
     except json.JSONDecodeError:
         payload = msg.payload.decode()  # If not JSON, use raw string
         print(f"Received non-JSON message on {msg.topic}: {payload}")
@@ -123,11 +131,17 @@ def on_message(client, userdata, msg):
         elif payload.get("action") == "FINISH":
             finish_received = True
         elif payload.get("action") == "CTG_END":
+            ctg_results_received = True # needs to be removed when cognitive are fixed
             ctg_received = True
         elif payload.get("action") == "CTG_RESULTS":
             ctg_results_received = True
             ctg_results_data = payload.get("message")
     elif msg.topic == MSG_TOPIC:
+        if payload.get("action") == "ACK_VIDEO":
+            #print("GOT ACK")
+            video_ack = True
+        if payload.get("action") == "VIDEO_END":
+            video_stop = True
         if payload.get("action") == "ACK":
             ack_received = True
         elif payload.get("action") == "FINISH":
@@ -140,28 +154,41 @@ def on_message(client, userdata, msg):
 
 # Publish and Wait
 def publish_and_wait(client, topic, message, timeout=1000, wait_for="ACK"):
-    global ack_received, demo_start_received, demo_end_received, finish_received, ctg_received, ctg_results_received,ack_ctg_received
-    reset_global_flags()
+    global ack_received, demo_start_received, demo_end_received, finish_received, ctg_received, ctg_results_received,ack_ctg_received,video_ack,video_stop
+    #reset_global_flags()
 
-    ack_received = demo_start_received = demo_end_received = finish_received = ctg_received =  False 
+    #ack_received = demo_start_received = demo_end_received = finish_received = ctg_received = video_ack= video_stop =  False 
     client.publish(topic, json.dumps(message))
     print(f"Published: {message} to {topic}")
 
     start_time = time.time()
     while time.time() - start_time < timeout:
         if wait_for == "ACK" and ack_received:
+            ack_received = False;
             return True
         if wait_for == "ACK_CTG" and ack_ctg_received:
+            ack_ctg_received = False;
             return True
         if wait_for == "DEMO_START" and demo_start_received:
+            demo_start_received = False;
             return True
         if wait_for == "DEMO_END" and demo_end_received:
+            demo_end_received = False;
             return True
         if wait_for == "FINISH" and finish_received:
+            finish_received = False;
             return True
         if wait_for == "CTG_END" and ctg_received:
+            ctg_received = False;
             return True
         if wait_for == "CTG_RESULTS" and ctg_results_received:
+            ctg_results_received = False;
+            return True
+        if wait_for == "ACK_VIDEO" and video_ack:
+            video_ack = False;
+            return True
+        if wait_for == "VIDEO_END" and video_stop:
+            video_stop = False;
             return True
         time.sleep(0.5)
     print(f"Timeout waiting for {wait_for} on message: {message}")
@@ -197,6 +224,8 @@ def set_language(client, language):
 #{'exerciseName': 'ex1', 'progression': 0, 'exerciseId': 1, 'weekNumber': 47, 'year': 2024}
 # Function for Exercise Demonstration
 
+
+
 def send_exit(client):
     exit_message = {
         "action": "EXIT",
@@ -210,7 +239,7 @@ def send_exit(client):
     print(f"Published EXIT message: {exit_message}")
 
 def start_exercise_demo(client, exercise):
-    reset_global_flags()
+    #reset_global_flags()
 
     if exercise['exerciseId'] == 1:
         exercise_name = f"VC holobalance_sitting_1 P{exercise['progression']}"
@@ -282,8 +311,53 @@ def start_exercise_demo(client, exercise):
     print(f"Exercise demonstration for {exercise_name} completed.")
 
 
+def start_video(client,exercise):
+    if exercise['exerciseId'] == 24:
+         video_id=1
+    elif exercise['exerciseId'] == 25:
+         video_id=2
+    elif exercise['exerciseId'] == 26:
+         video_id=3
+    elif exercise['exerciseId'] == 27:
+        video_id=4
+    start_video_message = {
+        "action": "START_VIDEO",
+        "exercise": "",
+        "timestamp": datetime.now().isoformat(),
+        "code" : "",
+        "message": f"{video_id}",
+        "language":"/"
+    }
+    print("video_ack = ", video_ack)
+    while not publish_and_wait(client, MSG_TOPIC, start_video_message, wait_for="ACK_VIDEO"):
+        print("Waiting for ACK_VIDEO...")
+    print(f"Exercise demonstration for {start_video_message} completed.")
+
+def stop_video(client,exercise):
+    if exercise['exerciseId'] == 24:
+         video_id=1
+    elif exercise['exerciseId'] == 25:
+         video_id=2
+    elif exercise['exerciseId'] == 26:
+         video_id=3
+    elif exercise['exerciseId'] == 27:
+        video_id=4
+    stop_video_message = {
+        "action": "STOP_VIDEO",
+        "exercise": "",
+        "timestamp": datetime.now().isoformat(),
+        "code" : "",
+        "message": f"{video_id}",
+        "language":"/"
+    }   
+    
+    while not publish_and_wait(client, MSG_TOPIC, stop_video_message, wait_for="VIDEO_END"):
+        print("Waiting for VIDEO_END...")
+    print(f"Exercise demonstration for {stop_video_message} completed.")
+
+
 def start_exergames(client, exercise):
-    reset_global_flags()
+    #reset_global_flags()
 
     if exercise['exerciseId'] == 28:
         exercise_name = "holobalance_exergame_s2_sitting_1"
@@ -333,14 +407,14 @@ def start_exergames(client, exercise):
 
 def start_cognitive_games(client, exercise):
     global ctg_results_data,ctg_results_received
-    reset_global_flags()
-    reset_ctg()
+    #reset_global_flags()
+    #reset_ctg()
     if exercise['exerciseId'] == 37:
         exercise_name = "holobalance_cognitive_s3_memory"
         msg= f"{exercise['progression']}"
     elif exercise['exerciseId'] == 38:
         exercise_name = "holobalance_cognitive_s3_catching_food"
-        msg= msg= f"{exercise['progression']}"
+        msg= f"{exercise['progression']}"
     elif exercise['exerciseId'] == 39:
         exercise_name = "holobalance_cognitive_s3_remember_previous"
         msg= f"{exercise['progression']}"
@@ -365,14 +439,16 @@ def start_cognitive_games(client, exercise):
     }
 
 
-    success = publish_and_wait(client, DEMO_TOPIC, cognitive_message, wait_for="CTG_RESULTS")
+    #success = publish_and_wait(client, DEMO_TOPIC, cognitive_message, wait_for="CTG_RESULTS")
+    success = publish_and_wait(client, DEMO_TOPIC, cognitive_message, wait_for="CTG_END")
     
     if success and ctg_results_data:
         print("Results received for cognitive game.")
         print("ctg_results_data =", ctg_results_data)
 
         try:
-            parsed_data = json.loads(ctg_results_data)
+            #parsed_data = json.loads(ctg_results_data) # needs to be added back in when cognitive are fixed
+            parsed_data = {'score':'0'}
             if isinstance(parsed_data, str):
                 parsed_data = json.loads(parsed_data)
             return parsed_data
@@ -389,7 +465,7 @@ def start_cognitive_games(client, exercise):
 
 # Function for Sending Oral Instructions
 def send_voice_instructions(client, code):
-    reset_global_flags()
+    #reset_global_flags()
     oral_message = {
         "action": "SPEAK",
         "exercise": "/",
@@ -398,13 +474,12 @@ def send_voice_instructions(client, code):
         "message":"Thats it for today. Thank you very much for your cooperation, and have a nice day. I was glad to be of help.",
         "language":"/"
     }
-    # while not publish_and_wait(MSG_TOPIC, oral_message, wait_for="ACK"):
-    #     print("Retrying SPEAK message...")
+
     while not publish_and_wait(client, MSG_TOPIC, oral_message, wait_for="FINISH"):
         print("Retrying DEMO_START...")
 
 def send_voice_instructions_ctg(client, code):
-    reset_global_flags()
+    #reset_global_flags()
     oral_message = {
         "action": "SPEAK_CTG",
         "exercise": "/",
@@ -429,8 +504,8 @@ def send_message_with_speech_to_text(client, code, timeout=20):
     Returns:
         str: The user's response ("yes" or "no").
     """
-    global finish_response
-    reset_global_flags()
+    global finish_response,finish_received
+    #reset_global_flags()
 
     # Message format stays the same as simple oral message
     oral_message = {
@@ -452,6 +527,7 @@ def send_message_with_speech_to_text(client, code, timeout=20):
         while time.time() - start_time < timeout:
             if finish_response in ["yes", "no"]:
                 print(f"Received FINISH_RESPONSE: {finish_response}")
+                finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
 
@@ -461,8 +537,8 @@ def send_message_with_speech_to_text(client, code, timeout=20):
 
 def send_message_with_speech_to_text_2(client, code, timeout=20):
 
-    global finish_response
-    reset_global_flags()
+    global finish_response ,finish_received
+    #reset_global_flags()
 
     # Message format stays the same as simple oral message
     oral_message = {
@@ -484,6 +560,7 @@ def send_message_with_speech_to_text_2(client, code, timeout=20):
         while time.time() - start_time < timeout:
             if finish_response in ["low", "moderate","severe"]:
                 print(f"Received FINISH_RESPONSE: {finish_response}")
+                finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
 
@@ -493,8 +570,8 @@ def send_message_with_speech_to_text_2(client, code, timeout=20):
 
 def send_message_with_speech_to_text_ctg(client, code, timeout=20):
 
-    global finish_response
-    reset_global_flags()
+    global finish_response,finish_received
+    #reset_global_flags()
 
     # Message format stays the same as simple oral message
     oral_message = {
@@ -516,6 +593,7 @@ def send_message_with_speech_to_text_ctg(client, code, timeout=20):
         while time.time() - start_time < timeout:
             if finish_response in ["yes", "no"]:
                 print(f"Received FINISH_RESPONSE: {finish_response}")
+                finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
 
@@ -525,8 +603,8 @@ def send_message_with_speech_to_text_ctg(client, code, timeout=20):
 
 def send_message_with_speech_to_text_ctg_2(client, code, timeout=20):
 
-    global finish_response
-    reset_global_flags()
+    global finish_response,finish_received
+    #reset_global_flags()
 
     # Message format stays the same as simple oral message
     oral_message = {
@@ -548,6 +626,7 @@ def send_message_with_speech_to_text_ctg_2(client, code, timeout=20):
         while time.time() - start_time < timeout:
             if finish_response in ["low", "moderate","severe"]:
                 print(f"Received FINISH_RESPONSE: {finish_response}")
+                finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
 
