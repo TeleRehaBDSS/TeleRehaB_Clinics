@@ -345,7 +345,7 @@ def runScenario(queueData):
                     except Exception as e:
                         logger.error(f"Demonstration failed for Exercise ID {exercise['exerciseId']}: {e}")
                         continue
-                    time.sleep(5)
+                    time.sleep(30)
                     try:
                         stop_video(client, exercise)
                     except Exception as e:
