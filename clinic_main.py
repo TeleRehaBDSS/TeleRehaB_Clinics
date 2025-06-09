@@ -6,7 +6,7 @@ import os
 import multiprocessing as mp
 import threading
 import time
-import requests
+import requests 
 import configparser
 from datetime import datetime
 from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected,start_video,stop_video, reset_global_flags
