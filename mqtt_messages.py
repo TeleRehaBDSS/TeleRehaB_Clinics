@@ -410,22 +410,22 @@ def start_cognitive_games(client, exercise):
     #reset_global_flags()
     #reset_ctg()
     if exercise['exerciseId'] == 37:
-        exercise_name = "holobalance_cognitive_s3_memory"
-        msg= f"{exercise['progression']}"
-    elif exercise['exerciseId'] == 38:
-        exercise_name = "holobalance_cognitive_s3_catching_food"
-        msg= f"{exercise['progression']}"
-    elif exercise['exerciseId'] == 39:
-        exercise_name = "holobalance_cognitive_s3_remember_previous"
-        msg= f"{exercise['progression']}"
-    elif exercise['exerciseId'] == 40:
-        exercise_name = "holobalance_cognitive_s3_bridge_crossing"
-        msg= f"{exercise['progression']}"
-    elif exercise['exerciseId'] == 41:
         exercise_name = "holobalance_cognitive_s3_animal_feeding"
         msg= f"{exercise['progression']}"
-    elif exercise['exerciseId'] == 42:
+    elif exercise['exerciseId'] == 38:
+        exercise_name = "holobalance_cognitive_s3_bridge_crossing"
+        msg= f"{exercise['progression']}"
+    elif exercise['exerciseId'] == 39:
+        exercise_name = "holobalance_cognitive_s3_catching_food"
+        msg= f"{exercise['progression']}"
+    elif exercise['exerciseId'] == 40:
+        exercise_name = "holobalance_cognitive_s3_memory"
+        msg= f"{exercise['progression']}"
+    elif exercise['exerciseId'] == 41:
         exercise_name = "holobalance_cognitive_s3_preparing_animal_food"
+        msg= f"{exercise['progression']}"
+    elif exercise['exerciseId'] == 42:
+        exercise_name = "holobalance_cognitive_s3_remember_previous"
         msg= f"{exercise['progression']}"
     
 
@@ -460,7 +460,6 @@ def start_cognitive_games(client, exercise):
         print("ctg_results_received =", ctg_results_received)
         print("ctg_results_data =", ctg_results_data)
         return None
-
 
 
 # Function for Sending Oral Instructions
