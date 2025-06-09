@@ -498,7 +498,7 @@ def runScenario(queueData):
                                 headache_response = send_message_with_speech_to_text(client, "bph0077")
                                 metrics["symptoms"]["headache"] = {"present": headache_response}
                                 if headache_response == "yes":
-                                    rate_headache = send_message_with_speech_to_text_2(client, "bph0110")
+                                    rate_headache = send_message_with_speech_to_text_2(client, "bph0091")
                                     metrics["symptoms"]["headache"]["severity"] = rate_headache
                             except Exception as e:
                                 logger.error("Error getting headache response: %s", e)
@@ -507,9 +507,9 @@ def runScenario(queueData):
                             try:
                                 disorientated_response = send_message_with_speech_to_text(client, "bph0087")
                                 metrics["symptoms"]["disorientated"] = {"present": disorientated_response}
-                                if disorientated_response == "yes":
-                                    rate_disorientated = send_message_with_speech_to_text_2(client, "bph0110")
-                                    metrics["symptoms"]["disorientated"]["severity"] = rate_disorientated
+                                #if disorientated_response == "yes":
+                                #    rate_disorientated = send_message_with_speech_to_text_2(client, "bph0110")
+                                #    metrics["symptoms"]["disorientated"]["severity"] = rate_disorientated
                             except Exception as e:
                                 logger.error("Error getting disorientation response: %s", e)
 
@@ -518,7 +518,7 @@ def runScenario(queueData):
                                 blurry_vision_response = send_message_with_speech_to_text(client, "bph0089")
                                 metrics["symptoms"]["blurry_vision"] = {"present": blurry_vision_response}
                                 if blurry_vision_response == "yes":
-                                    rate_blurry_vision = send_message_with_speech_to_text_2(client, "bph0110")
+                                    rate_blurry_vision = send_message_with_speech_to_text_2(client, "bph0092")
                                     metrics["symptoms"]["blurry_vision"]["severity"] = rate_blurry_vision
                             except Exception as e:
                                 logger.error("Error getting blurry vision response: %s", e)
