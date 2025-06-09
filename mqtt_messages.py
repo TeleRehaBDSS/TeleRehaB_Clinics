@@ -74,7 +74,7 @@ def reset_global_flags():
     demo_start_received = False
     demo_end_received = False
     finish_received = False  
-    finish_response = False
+    finish_response = None
     ctg_received = False
     video_stop = False
     video_ack = False
@@ -131,7 +131,7 @@ def on_message(client, userdata, msg):
         elif payload.get("action") == "FINISH":
             finish_received = True
         elif payload.get("action") == "CTG_END":
-            ctg_results_received = True # needs to be removed when cognitive are fixed
+            #ctg_results_received = True # needs to be removed when cognitive are fixed
             ctg_received = True
         elif payload.get("action") == "CTG_RESULTS":
             ctg_results_received = True
@@ -153,7 +153,7 @@ def on_message(client, userdata, msg):
 
 
 # Publish and Wait
-def publish_and_wait(client, topic, message, timeout=1000, wait_for="ACK"):
+def publish_and_wait(client, topic, message, timeout=5000, wait_for="ACK"):
     global ack_received, demo_start_received, demo_end_received, finish_received, ctg_received, ctg_results_received,ack_ctg_received,video_ack,video_stop
     #reset_global_flags()
 
@@ -462,6 +462,7 @@ def start_cognitive_games(client, exercise):
         return None
 
 
+
 # Function for Sending Oral Instructions
 def send_voice_instructions(client, code):
     #reset_global_flags()
@@ -470,7 +471,7 @@ def send_voice_instructions(client, code):
         "exercise": "/",
         "timestamp": datetime.now().isoformat(),
         "code": code,
-        "message":"Thats it for today. Thank you very much for your cooperation, and have a nice day. I was glad to be of help.",
+        "message":"",
         "language":"/"
     }
 
@@ -484,7 +485,7 @@ def send_voice_instructions_ctg(client, code):
         "exercise": "/",
         "timestamp": datetime.now().isoformat(),
         "code": code,
-        "message":"Thats it for today. Thank you very much for your cooperation, and have a nice day. I was glad to be of help.",
+        "message":"",
         "language":"/"
     }
     # while not publish_and_wait(MSG_TOPIC, oral_message, wait_for="ACK"):
@@ -504,6 +505,7 @@ def send_message_with_speech_to_text(client, code, timeout=20):
         str: The user's response ("yes" or "no").
     """
     global finish_response,finish_received
+    finish_response = None;
     #reset_global_flags()
 
     # Message format stays the same as simple oral message
@@ -512,7 +514,7 @@ def send_message_with_speech_to_text(client, code, timeout=20):
         "exercise": "/",
         "timestamp": datetime.now().isoformat(),
         "code": code,
-        "message": "You have stopped too early, please try to continue the exercise. Yes or No?",
+        "message": "",
         "language": "/"
     }
 
@@ -529,6 +531,7 @@ def send_message_with_speech_to_text(client, code, timeout=20):
                 finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
+        time.sleep(5)
 
         # No response received, retrying
         print("No response received. Retrying...")
@@ -537,6 +540,7 @@ def send_message_with_speech_to_text(client, code, timeout=20):
 def send_message_with_speech_to_text_2(client, code, timeout=20):
 
     global finish_response ,finish_received
+    finish_response = None;
     #reset_global_flags()
 
     # Message format stays the same as simple oral message
@@ -545,7 +549,7 @@ def send_message_with_speech_to_text_2(client, code, timeout=20):
         "exercise": "/",
         "timestamp": datetime.now().isoformat(),
         "code": code,
-        "message": "You have stopped too early, please try to continue the exercise. Yes or No?",
+        "message": "mild, moderate, severe?",
         "language": "/"
     }
 
@@ -557,11 +561,13 @@ def send_message_with_speech_to_text_2(client, code, timeout=20):
 
         # Wait for response
         while time.time() - start_time < timeout:
-            if finish_response in ["low", "moderate","severe"]:
+            print(finish_response)
+            if finish_response in ["mild", "moderate","severe"]:
                 print(f"Received FINISH_RESPONSE: {finish_response}")
                 finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
+        time.sleep(5)
 
         # No response received, retrying
         print("No response received. Retrying...")
@@ -571,6 +577,7 @@ def send_message_with_speech_to_text_ctg(client, code, timeout=20):
 
     global finish_response,finish_received
     #reset_global_flags()
+    finish_response = None;
 
     # Message format stays the same as simple oral message
     oral_message = {
@@ -578,7 +585,7 @@ def send_message_with_speech_to_text_ctg(client, code, timeout=20):
         "exercise": "/",
         "timestamp": datetime.now().isoformat(),
         "code": code,
-        "message": "You have stopped too early, please try to continue the exercise. Yes or No?",
+        "message": "",
         "language": "/"
     }
 
@@ -595,6 +602,7 @@ def send_message_with_speech_to_text_ctg(client, code, timeout=20):
                 finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
+        time.sleep(5)
 
         # No response received, retrying
         print("No response received. Retrying...")
@@ -604,6 +612,7 @@ def send_message_with_speech_to_text_ctg_2(client, code, timeout=20):
 
     global finish_response,finish_received
     #reset_global_flags()
+    finish_response = None;
 
     # Message format stays the same as simple oral message
     oral_message = {
@@ -628,6 +637,7 @@ def send_message_with_speech_to_text_ctg_2(client, code, timeout=20):
                 finish_received=False
                 return finish_response  # Exit loop and return response
             time.sleep(0.5)
+        time.sleep(5)
 
         # No response received, retrying
         print("No response received. Retrying...")
