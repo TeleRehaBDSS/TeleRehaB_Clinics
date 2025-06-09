@@ -26,7 +26,7 @@ from UDPClient import SendMyIP
 from websocketServer import run_websocket_server
 from pathlib import Path
 
-# Get the directory where the script is located
+# Get the directory where the script is located at
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH_2 = BASE_DIR / 'clinic.ini'
 # Load config
