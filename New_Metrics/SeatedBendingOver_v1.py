@@ -340,7 +340,7 @@ def getMetricsSeatingOld03(Limu1, Limu2, plotdiagrams):
             start_index = head_minima_filtered[i]
             end_index = head_maxima_filtered[i + 1]
             chest_to_chin_times.append((end_index - start_index) * time_interval)
-        else:
+    else:
             chest_to_chin_times=0
             pelvis_maxima_filtered=[]
             time_between_pelvis_maxima=0
