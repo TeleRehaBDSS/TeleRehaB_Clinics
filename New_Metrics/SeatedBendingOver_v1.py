@@ -284,8 +284,12 @@ def getMetricsSeatingOld03(Limu1, Limu2, plotdiagrams):
     head_autocorr, head_lags = calculate_autocorrelation(head_filtered)
     pelvis_autocorr, pelvis_lags = calculate_autocorrelation(pelvis_filtered)
     degrees_autocorr , degrees_lags = calculate_autocorrelation(pelvis_normalized_pitch)
+    head_flag = np.isnan(head_autocorr).any()
+    pelvis_flag =  np.isnan(pelvis_autocorr).any()
+    degrees_flag = np.isnan(degrees_autocorr).any()
+
     # Find the lag of the first significant peak in autocorrelation
-    if len(head_autocorr) >= 2 and  len(pelvis_autocorr)>=2 and len(degrees_autocorr) >=2 :
+    if not(head_flag) and not(pelvis_flag) and not(degrees_flag) :
         head_distance = head_lags[next(i for i in range(1, len(head_autocorr)) if head_autocorr[i] < head_autocorr[0] * 0.9)]
         pelvis_distance = pelvis_lags[next(i for i in range(1, len(pelvis_autocorr)) if pelvis_autocorr[i] < pelvis_autocorr[0] * 0.9)]
         degrees_distance = degrees_lags[next(i for i in range(1, len(degrees_autocorr)) if degrees_autocorr[i] < degrees_autocorr[0] * 0.9)]
