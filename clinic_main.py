@@ -476,7 +476,7 @@ def runScenario(queueData):
 
                     #Post the results
                     #metrics["polar_data"] = polar_data
-                    if (exercise["isFirstSession"])== True :
+                    if (exercise["isFirstSession"])== True and exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,43] :
                         try:
                     # Combine sending voice instruction and waiting for response
                             symptomps_response = send_message_with_speech_to_text(client, "bph0101")

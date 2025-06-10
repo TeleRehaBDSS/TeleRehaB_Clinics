@@ -1796,7 +1796,7 @@ def receive_imu_data(q, scheduleQueue, config_message, exercise,metrics_queue):
     elif exercise_code == 'exer_21': #Hip External
         while INTERVALS < 4 or not q.empty():
             data = q.get()  # Read data from the dataQueue
-            print('data', data)
+        
 
             if ":" in data:  # Check for valid sensor data format
                 # Convert JSON data to SensorData object
