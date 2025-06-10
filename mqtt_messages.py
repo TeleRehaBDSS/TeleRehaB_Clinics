@@ -131,7 +131,7 @@ def on_message(client, userdata, msg):
         elif payload.get("action") == "FINISH":
             finish_received = True
         elif payload.get("action") == "CTG_END":
-            #ctg_results_received = True # needs to be removed when cognitive are fixed
+            ctg_results_received = True # needs to be removed when cognitive are fixed
             ctg_received = True
         elif payload.get("action") == "CTG_RESULTS":
             ctg_results_received = True
