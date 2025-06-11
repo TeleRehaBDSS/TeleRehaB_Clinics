@@ -1119,7 +1119,19 @@ def getMetricsSittingNew01(Limu1, Limu2, plotdiagrams=False):
         }
         }
     else:
-        metrics_data = {}
+        metrics_data = {
+            "total_metrics" :{
+            "number_of_movements": 0,
+            "pace_movements_per_second": 0,
+            "mean_range_degrees": 0,
+            "std_range_degrees": 0,
+            "mean_duration_seconds": 0,
+            "std_duration_seconds": 0,
+            "mean_stand_time_seconds": 0,
+            "std_stand_time_seconds": 0,
+            "exercise_duration_seconds": 0
+        }
+        }
     
     print(metrics_data)
     

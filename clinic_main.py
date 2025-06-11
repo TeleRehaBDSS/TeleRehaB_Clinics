@@ -25,6 +25,7 @@ from UDPSERVER import start_unicast_server
 from UDPClient import SendMyIP
 from websocketServer import run_websocket_server
 from pathlib import Path
+from mqtt_messages import ctg_queue
 
 # Get the directory where the script is located at
 BASE_DIR = Path(__file__).resolve().parent
@@ -364,28 +365,28 @@ def runScenario(queueData):
                         logger.warning("No results returned from cognitive game.")
                 
                 # Determine the config message based on exercise ID
-                if exercise['exerciseId'] == 1 or exercise['exerciseId'] == 28:
+                if exercise['exerciseId'] == 1 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-OFF,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_01"
-                elif exercise['exerciseId'] == 2 or exercise['exerciseId'] == 29:
+                elif exercise['exerciseId'] == 2 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-OFF,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_02"
                 elif exercise['exerciseId'] == 3 :
                     if exercise['progression'] == 0 or exercise['progression'] == 1:
                         config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_03"
                     else:
                         config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_25" #Side Bend Here
-                elif exercise['exerciseId'] == 4 or exercise['exerciseId'] == 30:
+                elif exercise['exerciseId'] == 4:
                     config_message = f"HEAD={imu_head}-OFF,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_09"
                 elif exercise['exerciseId'] == 5:
                     config_message = f"HEAD={imu_head}-OFF,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_10"
-                elif exercise['exerciseId'] == 6 or exercise['exerciseId'] == 31:
+                elif exercise['exerciseId'] == 6 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_11"
                 elif exercise['exerciseId'] == 7:
                     config_message = f"HEAD={imu_head}-OFF,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-QUATERNIONS,RIGHTFOOT={imu_right}-QUATERNIONS,exer_12"
-                elif exercise['exerciseId'] == 8 or exercise['exerciseId'] == 33:
+                elif exercise['exerciseId'] == 8 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_16"
-                elif exercise['exerciseId'] == 9 or exercise['exerciseId'] == 34:
+                elif exercise['exerciseId'] == 9 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_17"
-                elif exercise['exerciseId'] == 10 or exercise['exerciseId'] == 35 or exercise['exerciseId'] == 36:
+                elif exercise['exerciseId'] == 10 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_18"
                 elif exercise['exerciseId'] == 11:
                     config_message = f"HEAD={imu_head}-OFF,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_21"
@@ -413,8 +414,24 @@ def runScenario(queueData):
                     config_message = f"HEAD={imu_head}-OFF,PELVIS={imu_pelvis}-OFF,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_19"
                 elif exercise['exerciseId'] == 23:
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_20"
-                elif exercise["exerciseId"] == 43 or exercise['exerciseId'] == 32:
+                elif exercise["exerciseId"] == 43 :
                     config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_24"
+                elif exercise['exerciseId'] == 28:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-OFF,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_28"
+                elif exercise['exerciseId'] == 29:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-OFF,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_29"
+                elif exercise['exerciseId'] == 30:
+                    config_message = f"HEAD={imu_head}-OFF,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_30"
+                elif exercise['exerciseId'] == 31:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_31"
+                elif exercise['exerciseId'] == 32:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-OFF,RIGHTFOOT={imu_right}-OFF,exer_32"
+                elif exercise['exerciseId'] == 33:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_33"
+                elif exercise['exerciseId'] == 34:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_34"
+                elif exercise['exerciseId'] == 35 or exercise['exerciseId'] == 36:
+                    config_message = f"HEAD={imu_head}-QUATERNIONS,PELVIS={imu_pelvis}-QUATERNIONS,LEFTFOOT={imu_left}-LINEARACCELERATION,RIGHTFOOT={imu_right}-LINEARACCELERATION,exer_35"
                 else:
                     logger.warning(f"No config message found for Exercise ID: {exercise['exerciseId']}")
                     
@@ -438,7 +455,7 @@ def runScenario(queueData):
                     # Start the process to receive IMU data
                     imu_process = mp.Process(
                         target=receive_imu_data,
-                        args=(queueData, scheduleQueue, config_message, exercise,metrics_queue,)
+                        args=(queueData, scheduleQueue, config_message, exercise,metrics_queue,ctg_queue,)
                     )
 
                     imu_process.start()
@@ -526,6 +543,8 @@ def runScenario(queueData):
                                 break;
                     
                     score = give_score(metrics, exercise['exerciseId']) 
+                    print(score)
+                    print(metrics)
                     metrics["score"] = score
                     post_results(json.dumps(metrics), exercise['exerciseId'])
                    

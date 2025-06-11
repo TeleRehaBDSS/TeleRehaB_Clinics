@@ -41,6 +41,7 @@ ctg_results_data = None
 video_stop = None
 video_ack = None
 iamalive_queue = mp.Queue()
+ctg_queue = mp.Queue()
 
 def wait_for_ctg_results(timeout=70):
     global ctg_results_received, ctg_results_data
@@ -133,6 +134,7 @@ def on_message(client, userdata, msg):
         elif payload.get("action") == "CTG_END":
             ctg_results_received = True # needs to be removed when cognitive are fixed
             ctg_received = True
+            ctg_queue.put('OK')
         elif payload.get("action") == "CTG_RESULTS":
             ctg_results_received = True
             ctg_results_data = payload.get("message")
