@@ -46,6 +46,46 @@ CONFIG_PATH = BASE_DIR / 'config.ini'
 TOPIC_PING = "healthcheck/AREYOUALIVE"
 TOPIC_PONG = "healthcheck/IAMALIVE"
 
+def reorder_exercises2(session):
+    group_definitions = {
+        "Stretching": [11, 12, 13],
+        "Sitting Exercises": [1, 2, 3, 14, 17, 18],
+        "Standing Exercises": [4, 5, 6, 7, 15, 16, 19, 20, 21, 30, 31, 43],
+        "Walking Exercises": [8, 9, 10, 22, 23],
+        "Optokinetic Exercises": [24, 25, 26, 27, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+        "Exergames": [28, 29, 30, 31, 32, 33, 34, 35, 36],
+        "Cognitive Games": [37, 38, 39, 40, 41, 42]
+    }
+
+    # Initialize ordered buckets
+    grouped = {
+        "Stretching": [],
+        "Sitting Exercises": [],
+        "Standing Exercises": [],
+        "Walking Exercises": [],
+        "Optokinetic Exercises": [],
+        "Exergames": [],
+        "Cognitive Games": [],
+    }
+
+    # Track assigned IDs to avoid duplicates
+    assigned_ids = set()
+
+    # Process each exercise in input order
+    for ex in session:
+        eid = ex["exerciseId"]
+        for group_name, id_list in group_definitions.items():
+            if eid in id_list and eid not in assigned_ids:
+                grouped[group_name].append(ex)
+                assigned_ids.add(eid)
+                break
+
+    # Return in desired group order
+    ordered_session = []
+    for group_name in grouped:
+        ordered_session.extend(grouped[group_name])
+    return ordered_session
+
 def reorder_exercises(exercises): #Function that add the exer and cognitive games at the end
     priority_ids = list(range(1, 28))  
     special_id = 43
@@ -309,11 +349,18 @@ def runScenario(queueData):
 
             # Fetch the daily schedule
             exercises = get_daily_schedule()
-            exercises = reorder_exercises(exercises)
-            print("Get list",exercises)
+            print('--- Daily Schedule --- original order')
+            for ex in exercises:
+                print(ex["exerciseId"], ex["description"])
+            exercises = reorder_exercises2(exercises)
+
+            print('--- Daily Schedule --- reordered order')
+            for ex in exercises:
+                print(ex["exerciseId"], ex["description"])
+
             if not isinstance(exercises, list) or not exercises:
                 send_exit()
-                break                    
+                break                  
 
             # Process each exercise in the schedule
             for exercise in exercises:
