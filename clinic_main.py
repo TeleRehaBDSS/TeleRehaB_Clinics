@@ -49,10 +49,10 @@ TOPIC_PONG = "healthcheck/IAMALIVE"
 def reorder_exercises2(session):
     group_definitions = {
         "Stretching": [11, 12, 13],
-        "Sitting Exercises": [1, 2, 3, 14, 17, 18],
-        "Standing Exercises": [4, 5, 6, 7, 15, 16, 19, 20, 21, 30, 31, 43],
-        "Walking Exercises": [8, 9, 10, 22, 23],
-        "Optokinetic Exercises": [24, 25, 26, 27, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+        "Sitting Exercises": [1, 2, 3, 14,15, 16, 17, 18],
+        "Standing Exercises": [4, 5, 6, 7, 19, 20, 21,43],
+        "Walking Exercises": [8, 9, 10, 22],
+        "Optokinetic Exercises": [24, 25, 26, 27],
         "Exergames": [28, 29, 30, 31, 32, 33, 34, 35, 36],
         "Cognitive Games": [37, 38, 39, 40, 41, 42]
     }
