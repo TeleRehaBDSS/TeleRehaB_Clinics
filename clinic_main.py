@@ -514,8 +514,8 @@ def runScenario(queueData):
                         if isinstance(msg, tuple) and msg[0] == "data_zip":
                             data_zip_path = msg[1]
                             break
-                    #if data_zip_path:
-                    #    upload_file(data_zip_path, "Data")
+                    if data_zip_path:
+                        upload_file(data_zip_path, "Data")
                     # Terminate the scheduler process
                     scheduler_process.terminate()
                     scheduler_process.join()
