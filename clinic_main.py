@@ -451,7 +451,10 @@ def runScenario(queueData):
                         metrics = results
                         post_results(json.dumps(metrics), exercise['exerciseId'])
                     else:
+                        metrics = {"metrics": ["ERROR IN METRICS", "ERROR IN METRICS", "ERROR IN METRICS"]}
+                        post_results(json.dumps(metrics), exercise['exerciseId'])
                         logger.warning("No results returned from cognitive game.")
+
                 
                 # Determine the config message based on exercise ID
                 if exercise['exerciseId'] == 1 :
@@ -659,7 +662,7 @@ def runScenario(queueData):
                 else:
                     try:
                         metrics = {"metrics": ["ERROR IN METRICS", "ERROR IN METRICS", "ERROR IN METRICS"]}
-                        #post_results(json.dumps(metrics), exercise['exerciseId'])
+                        post_results(json.dumps(metrics), exercise['exerciseId'])
                     except json.JSONDecodeError:
                         print("Metrics_2 could not be parsed as JSON.")
                         return
