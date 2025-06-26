@@ -354,7 +354,7 @@ def runScenario(queueData):
     print("App connected, continuing...")
     try:
         time.sleep(2)
-        set_language(client, "GR")
+        set_language(client, "EN")
     except Exception as e:
         print(f"Language selection failed{e}")
         return
