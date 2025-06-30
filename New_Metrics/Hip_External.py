@@ -132,9 +132,9 @@ def getMetricsStretching1(Limu2, plotdiagrams):
     
     columns = ['Timestamp', 'elapsed(time)',  'W(number)', 'X(number)', 'Y (number)', 'Z (number)']
     df_Limu2 = pd.DataFrame(Limu2, columns=columns)
-    df_Limu2['Timestamp'] = pd.to_datetime(df_Limu2['Timestamp'])
-    df_Limu2 = df_Limu2.sort_values(by='Timestamp')
-    df_Limu2.set_index('Timestamp', inplace=True)
+    df_Limu2['elapsed(time)'] = pd.to_datetime(df_Limu2['elapsed(time)'], unit='ms')
+    df_Limu2 = df_Limu2.sort_values(by='elapsed(time)')
+    df_Limu2.set_index('elapsed(time)', inplace=True)
     total_duration_seconds = (df_Limu2.index[-1] - df_Limu2.index[0]).total_seconds()
     # Compile metrics
     metrics_data = {
