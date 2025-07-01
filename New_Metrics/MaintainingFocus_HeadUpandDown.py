@@ -213,7 +213,7 @@ def getMetricsSittingOld02(Limu1, plotdiagrams):
         plt.show()
 
     fs = 50
-    cutoff = 0.5
+    cutoff = 0.75
 
     pitch_filtered = butter_lowpass_filter(euler_df_degrees['Pitch (degrees)'], cutoff, fs, order=5)
     if (plotdiagrams):
