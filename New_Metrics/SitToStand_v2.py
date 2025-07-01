@@ -1111,10 +1111,10 @@ def getMetricsSittingNew01(Limu1, Limu2, plotdiagrams=False):
             "pace_movements_per_second": len(final_movements) / exercise_duration,
             "mean_range_degrees": np.mean(ranges),
             "std_range_degrees": np.std(ranges),
-            "mean_duration_seconds": np.mean(durations),
-            "std_duration_seconds": np.std(durations),
-            "mean_stand_time_seconds": np.mean(stand_durations),
-            "std_stand_time_seconds": np.std(stand_durations),
+            "mean_duration_seconds": np.mean(durations)/1000000.0,
+            "std_duration_seconds": np.std(durations)/1000000.0,
+            "mean_stand_time_seconds": np.mean(stand_durations)/1000000.0,
+            "std_stand_time_seconds": np.std(stand_durations)/1000000.0,
             "exercise_duration_seconds": exercise_duration
         }
         }
