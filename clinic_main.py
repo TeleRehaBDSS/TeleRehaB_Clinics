@@ -43,8 +43,8 @@ EXIT_TOPIC = f"exercise@{clinic_id}/exit"
 
 # Construct the paths for config and logo
 CONFIG_PATH = BASE_DIR / 'config.ini'
-TOPIC_PING = f"healthcheck@{clinic_id}/AREYOUALIVE"
-TOPIC_PONG = f"healthcheck@{clinic_id}/IAMALIVE"
+TOPIC_PING = f"healthcheck/{clinic_id}/AREYOUALIVE"
+TOPIC_PONG = f"healthcheck/{clinic_id}/IAMALIVE"
 
 camera_result = mp.Manager().dict()
 polar_result = mp.Manager().dict()
