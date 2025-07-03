@@ -36,9 +36,9 @@ config.read(CONFIG_PATH_2)
 # Get clinic_id and strip quotes
 clinic_id = config.get("CLINIC", "clinic_id").strip('"')
 
-DEMO_TOPIC = f"exercise{clinic_id}/demo"
-MSG_TOPIC = f"exercise{clinic_id}/msg"
-EXIT_TOPIC = f"exercise{clinic_id}/exit"
+DEMO_TOPIC = f"exercise@{clinic_id}/demo"
+MSG_TOPIC = f"exercise@{clinic_id}/msg"
+EXIT_TOPIC = f"exercise@{clinic_id}/exit"
 
 
 # Construct the paths for config and logo
