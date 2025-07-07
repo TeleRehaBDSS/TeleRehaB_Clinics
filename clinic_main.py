@@ -561,8 +561,8 @@ def runScenario(queueData):
                         if isinstance(msg, tuple) and msg[0] == "data_zip":
                             data_zip_path = msg[1]
                             break
-                    #if data_zip_path:
-                    #    upload_file(data_zip_path, "Data")
+                    if data_zip_path:
+                        upload_file(data_zip_path, "Data")
                     # Terminate the scheduler process
                     scheduler_process.terminate()
                     scheduler_process.join()
@@ -618,9 +618,9 @@ def runScenario(queueData):
                             try:
                                 disorientated_response = send_message_with_speech_to_text(client, "bph0087")
                                 metrics["symptoms"]["disorientated"] = {"present": disorientated_response}
-                                #if disorientated_response == "yes":
-                                #    rate_disorientated = send_message_with_speech_to_text_2(client, "bph0110")
-                                #    metrics["symptoms"]["disorientated"]["severity"] = rate_disorientated
+                                if disorientated_response == "yes":
+                                    rate_disorientated = send_message_with_speech_to_text_2(client, "bph0110")
+                                    metrics["symptoms"]["disorientated"]["severity"] = rate_disorientated
                             except Exception as e:
                                 logger.error("Error getting disorientation response: %s", e)
 
@@ -661,7 +661,9 @@ def runScenario(queueData):
                     post_results(json.dumps(metrics), exercise['exerciseId'])
                 else:
                     try:
-                        metrics = {"metrics": ["ERROR IN METRICS", "ERROR IN METRICS", "ERROR IN METRICS"]}
+                        metrics = {"metrics": ["ERROR IN METRICS", "ERROR IN METRICS", "ERROR IN METRICS"],
+                                   "score" : -1}
+
                         post_results(json.dumps(metrics), exercise['exerciseId'])
                     except json.JSONDecodeError:
                         print("Metrics_2 could not be parsed as JSON.")
