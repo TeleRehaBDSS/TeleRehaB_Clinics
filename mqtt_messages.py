@@ -154,6 +154,8 @@ def on_message(client, userdata, msg):
             finish_received = True
         elif payload.get("action") == "FINISH_RESPONSE":
             finish_response = payload.get("message", "").lower()
+        elif payload.get("action") == "APPKILLED":
+            finish_response = 'APPKILLED';
     elif msg.topic == IAMALIVETOPIC:
         iamalive_queue.put('OK')
 
@@ -536,6 +538,10 @@ def send_message_with_speech_to_text(client, code, timeout=20):
                 print(f"Received FINISH_RESPONSE: {finish_response}")
                 finish_received=False
                 return finish_response  # Exit loop and return response
+            elif finish_response == 'APPKILLED':
+                print("App was killed, exiting...")
+                finish_received=False
+                return 'APPKILLED'
             time.sleep(0.5)
         time.sleep(5)
 

@@ -36,15 +36,15 @@ config.read(CONFIG_PATH_2)
 # Get clinic_id and strip quotes
 clinic_id = config.get("CLINIC", "clinic_id").strip('"')
 
-DEMO_TOPIC = f"exercise@{clinic_id}/demo"
-MSG_TOPIC = f"exercise@{clinic_id}/msg"
-EXIT_TOPIC = f"exercise@{clinic_id}/exit"
+DEMO_TOPIC = f"exercise{clinic_id}/demo"
+MSG_TOPIC = f"exercise{clinic_id}/msg"
+EXIT_TOPIC = f"exercise{clinic_id}/exit"
 
 
 # Construct the paths for config and logo
 CONFIG_PATH = BASE_DIR / 'config.ini'
-TOPIC_PING = f"healthcheck/{clinic_id}/AREYOUALIVE"
-TOPIC_PONG = f"healthcheck/{clinic_id}/IAMALIVE"
+TOPIC_PING = f"healthcheck@{clinic_id}/AREYOUALIVE"
+TOPIC_PONG = f"healthcheck@{clinic_id}/IAMALIVE"
 
 camera_result = mp.Manager().dict()
 polar_result = mp.Manager().dict()
@@ -352,6 +352,8 @@ def runScenario(queueData):
     while not app_connected.value:
         time.sleep(1)
     print("App connected, continuing...")
+    app_connected.value = False  # Reset for next use
+
     try:
         time.sleep(2)
         set_language(client, "EN")
@@ -575,6 +577,7 @@ def runScenario(queueData):
                 else:
                     print("###cognitive###")
                 
+                response = 'X';
                 if not metrics_queue.empty():
                     metrics = metrics_queue.get()
                     print(metrics)
@@ -587,6 +590,7 @@ def runScenario(queueData):
 
                     #Post the results
                     #metrics["polar_data"] = polar_data
+                    
                     if (exercise["isFirstSession"])== True and exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,43] :
                         try:
                     # Combine sending voice instruction and waiting for response
@@ -600,7 +604,7 @@ def runScenario(queueData):
                             # Ask if wanna to move to another exercise
                             metrics["symptoms"] = {"symptom_check": "no"}
 
-                        else:
+                        elif symptomps_response == "yes":
                             # Create a new key in metrics for symptoms
                             metrics["symptoms"] = {}
 
@@ -634,7 +638,10 @@ def runScenario(queueData):
                             except Exception as e:
                                 logger.error("Error getting blurry vision response: %s", e)
                                 break;
-                    
+                        else: #response = APPKILLED
+                            metrics["symptoms"] = {"symptom_check": "novirtualcoach"}
+
+                    response = symptomps_response;
                     score = give_score(metrics, exercise['exerciseId']) 
                     print(score)
                     print(metrics)
@@ -650,7 +657,6 @@ def runScenario(queueData):
                         metrics["camera"] = {"error": "Camera data not available"}
 
                     try:
-
                         with open("polar_results.txt", "r") as f:
                             polar_metrics = f.read()
                             print(polar_metrics)
@@ -662,8 +668,7 @@ def runScenario(queueData):
                 else:
                     try:
                         metrics = {"metrics": ["ERROR IN METRICS", "ERROR IN METRICS", "ERROR IN METRICS"],
-                                   "score" : -1}
-
+                                   "score" : "-1"}
                         post_results(json.dumps(metrics), exercise['exerciseId'])
                     except json.JSONDecodeError:
                         print("Metrics_2 could not be parsed as JSON.")
@@ -671,7 +676,7 @@ def runScenario(queueData):
                 
                 # Mark the exercise as completed
                 print(f"Exercise {exercise['exerciseName']} completed.")
-                time.sleep(10)
+                time.sleep(1)
 
                 # Fetch updated schedule after processing current exercises
                 exercises = get_daily_schedule()
@@ -687,11 +692,13 @@ def runScenario(queueData):
                         handler.close()
                         logger.removeHandler(handler)
                     if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,43]:
-                        send_voice_instructions(client, "bph0222")
-                        send_voice_instructions(client, "bph0108")
-                    else :
-                        send_voice_instructions_ctg(client, "bph0222")
-                        send_voice_instructions_ctg(client, "bph0108")
+                        if (response != "APPKILLED"):
+                            send_voice_instructions(client, "bph0222")
+                            send_voice_instructions(client, "bph0108")
+                    else:
+                        if (response != "APPKILLED"):
+                            send_voice_instructions_ctg(client, "bph0222")
+                            send_voice_instructions_ctg(client, "bph0108")
                     client.publish(f'TELEREHAB@{clinic_id}/EXIT','EXIT')
                     client.publish(f'camera@{clinic_id}','CAMERAOUT')
                     client.publish(f'polar@{clinic_id}','polarout')
@@ -700,9 +707,11 @@ def runScenario(queueData):
                 try:
                     time.sleep(2)
                     if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,43]:
-                        response = send_message_with_speech_to_text(client, "bph0088")
-                    else :
-                        response = send_message_with_speech_to_text_ctg(client, "bph0088")
+                        if (response != "APPKILLED"):
+                            response = send_message_with_speech_to_text(client, "bph0088")
+                    else:
+                        if (response != "APPKILLED"):
+                            response = send_message_with_speech_to_text_ctg(client, "bph0088")
                 except Exception as e:
                     logger.error(f"Failed to send voice instruction or get response for Exercise ID {exercise['exerciseId']}: {e}")
                     return
@@ -737,6 +746,32 @@ def runScenario(queueData):
                     else:
                         send_voice_instructions_ctg(client, "bph0045")
                     continue
+                elif response == "APPKILLED":
+                    print('User killed the app. Proceeding with next exercise.');
+                    #client.publish(f'TELEREHAB@{clinic_id}/STARTVC', 'STARTVC')
+                    time.sleep(4)
+                    
+                    # Stop recording after data collection is done
+                    #client.publish(f'TELEREHAB@{clinic_id}/StopRecording', 'STOP_RECORDING')
+                    #time.sleep(2)
+                    print("Waiting for app to connect after kill...")
+                    while not app_connected.value:
+                        time.sleep(1)
+                    print("App connected, continuing...")
+                    time.sleep(3)
+                    try:
+                        time.sleep(3)
+                        set_language(client, "EN")
+                    except Exception as e:
+                        print(f"Language selection failed{e}")
+                        return
+
+                    print("User chose to kill the app and continue. Proceeding with next exercise.")
+                    #if exercise["exerciseId"] in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,43]:
+                    #    send_voice_instructions(client, "bph0045")
+                    #else:
+                    #    send_voice_instructions_ctg(client, "bph0045")
+                    continue                    
             
 
     except requests.exceptions.RequestException as e:
