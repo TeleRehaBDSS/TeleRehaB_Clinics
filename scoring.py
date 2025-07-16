@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import joblib
 
 
 def give_score(metrics,id):
@@ -142,4 +143,10 @@ def give_score(metrics,id):
     else :
         score = 3
     return score
+
+def give_score_AI(metrics, id):
+    # Load the function from the joblib file
+    loaded_give_score = joblib.load('give_score_AI.joblib')
+    return loaded_give_score(metrics, id);
+
 

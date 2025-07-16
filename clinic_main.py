@@ -12,7 +12,7 @@ from datetime import datetime
 from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected,start_video,stop_video, reset_global_flags,POLAR_TOPIC
 from data_management_v05 import scheduler, receive_imu_data
 from api_management import login, get_device_api_key
-from scoring import give_score
+from scoring import give_score_AI
 from configure_file_management import read_configure_file
 #from Polar_test import start_ble_process 
 from shared_variables import (
@@ -642,7 +642,7 @@ def runScenario(queueData):
                             metrics["symptoms"] = {"symptom_check": "novirtualcoach"}
 
                     response = symptomps_response;
-                    score = give_score(metrics, exercise['exerciseId']) 
+                    score = give_score_AI(metrics, exercise['exerciseId']) 
                     print(score)
                     print(metrics)
                     metrics["score"] = score
