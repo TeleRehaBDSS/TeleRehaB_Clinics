@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import joblib
-
+import sys
 
 def give_score(metrics,id):
     if id ==1 or id==2 : # Head Left-Right & Head Up-Down
@@ -143,6 +143,11 @@ def give_score(metrics,id):
     else :
         score = 3
     return score
+
+from scoring import give_score  
+
+
+sys.modules['__main__'].give_score = give_score
 
 def give_score_AI(metrics, id):
     # Load the function from the joblib file
