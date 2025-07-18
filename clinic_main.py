@@ -303,6 +303,47 @@ def post_results(score, exercise_id):
     except requests.exceptions.RequestException as e:
         logger.error(f"Error posting results: {e}")
 
+def get_patient_id():
+    """Fetch the daily schedule from the API."""
+    config = configparser.ConfigParser()
+    config.read(CONFIG_PATH)
+    api_key_edge = config['API'].get('key_edge', '')
+    
+    url = 'http://telerehab-develop.biomed.ntua.gr/api/PatientDeviceSet/Check'
+    headers = {
+        'accept': '*/*',
+        'Authorization': api_key_edge
+    }
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json().get("patientId")  # ✅ just the int
+    else:
+        response.raise_for_status()
+
+def post_patient_ip(mac_address):
+    patient_id = get_patient_id()
+    if patient_id is None:
+        raise ValueError("Could not retrieve patientId")
+
+    url = 'https://telerehab-develop.biomed.ntua.gr/api/PatientDeviceSetIp'
+    headers = {
+        'accept': '*/*',
+        'Authorization': "yx1xfdYJMvGorWpBV5F1DGgU7KscfTQ4wdqe57Ca",
+        'Content-Type': 'application/json'
+    }
+    payload = {
+        'patientId': patient_id,
+        'data': mac_address
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+
+    if response.status_code == 200:
+        print("MAC address posted successfully.")
+    else:
+        print(f"Error posting MAC: {response.status_code}, {response.text}")
+        response.raise_for_status()
 
 def mqtt_heartbeat_server(clinic_id, broker, port=1883):
     PING_TOPIC = f"heartbeat/{clinic_id}/ping"
@@ -338,7 +379,7 @@ def start_heartbeat_process():
 def runScenario(queueData):
 
     client = init_mqtt_client()
-
+    post_patient_ip(MQTT_BROKER_HOST)
     logging.basicConfig(level=logging.INFO)
     #client.subscribe([(DEMO_TOPIC, 0), (MSG_TOPIC, 0), (EXIT_TOPIC,0)])
 
