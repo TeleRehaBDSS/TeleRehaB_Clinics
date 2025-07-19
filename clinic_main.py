@@ -682,7 +682,7 @@ def runScenario(queueData):
                         else: #response = APPKILLED
                             metrics["symptoms"] = {"symptom_check": "novirtualcoach"}
 
-                    response = symptomps_response;
+                        response = symptomps_response;
                     score = give_score_AI(metrics, exercise['exerciseId']) 
                     print(score)
                     print(metrics)
