@@ -9,7 +9,7 @@ import time
 import requests 
 import configparser
 from datetime import datetime
-from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected,start_video,stop_video, reset_global_flags,POLAR_TOPIC
+from mqtt_messages import init_mqtt_client, set_language, start_exercise_demo, send_voice_instructions,send_message_with_speech_to_text,send_message_with_speech_to_text_2,send_exit,start_cognitive_games,start_exergames,send_message_with_speech_to_text_ctg,send_message_with_speech_to_text_ctg_2,send_voice_instructions_ctg,app_connected,start_video,stop_video, reset_global_flags,POLAR_TOPIC,ACK_TOPIC
 from data_management_v05 import scheduler, receive_imu_data
 from api_management import login, get_device_api_key
 from scoring import give_score_AI
@@ -383,15 +383,20 @@ def runScenario(queueData):
     logging.basicConfig(level=logging.INFO)
     #client.subscribe([(DEMO_TOPIC, 0), (MSG_TOPIC, 0), (EXIT_TOPIC,0)])
 
+    client.publish(ACK_TOPIC, payload="ack", qos=1)
+
     client.publish(f'TELEREHAB@{clinic_id}/STARTVC', 'STARTVC')
     time.sleep(4)
-    
+    client.publish(ACK_TOPIC, payload="ack", qos=1)
+
+
     # Stop recording after data collection is done
     client.publish(f'TELEREHAB@{clinic_id}/StopRecording', 'STOP_RECORDING')
     time.sleep(2)
     print("Waiting for app to connect...")
     while not app_connected.value:
         time.sleep(1)
+        client.publish(f'TELEREHAB@{clinic_id}/STARTVC', 'STARTVC')
     print("App connected, continuing...")
     app_connected.value = False  # Reset for next use
 
@@ -663,9 +668,9 @@ def runScenario(queueData):
                             try:
                                 disorientated_response = send_message_with_speech_to_text(client, "bph0087")
                                 metrics["symptoms"]["disorientated"] = {"present": disorientated_response}
-                                if disorientated_response == "yes":
-                                    rate_disorientated = send_message_with_speech_to_text_2(client, "bph0110")
-                                    metrics["symptoms"]["disorientated"]["severity"] = rate_disorientated
+                                #if disorientated_response == "yes":
+                                #    rate_disorientated = send_message_with_speech_to_text_2(client, "bph0110")
+                                #   metrics["symptoms"]["disorientated"]["severity"] = rate_disorientated
                             except Exception as e:
                                 logger.error("Error getting disorientation response: %s", e)
 

@@ -33,6 +33,8 @@ EXIT_TOPIC = f"exercise@{clinic_id}/exit"
 IAMALIVETOPIC = "iamalive_topic"
 CAMERA_TOPIC = f"camera@{clinic_id}"
 POLAR_TOPIC = f"polar@{clinic_id}"
+PING_TOPIC = f"heartbeat/{clinic_id}/ping"
+ACK_TOPIC = f"heartbeat/{clinic_id}/ack"
 
 # Global Flags
 ack_received = False
@@ -96,7 +98,7 @@ def reset_ctg():
 # MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
-    client.subscribe([(DEMO_TOPIC, 0), (MSG_TOPIC, 0), (EXIT_TOPIC,0),(CAMERA_TOPIC,0),(POLAR_TOPIC,0)])
+    client.subscribe([(DEMO_TOPIC, 0), (MSG_TOPIC, 0), (EXIT_TOPIC,0),(CAMERA_TOPIC,0),(POLAR_TOPIC,0),(PING_TOPIC,0),(ACK_TOPIC,0)])
 
 
 def on_message(client, userdata, msg):
