@@ -20,6 +20,7 @@ from shared_variables import (
     MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_KEEP_ALIVE_INTERVAL,
     mqttState
 )
+from UDPClient2 import broadcast_ip
 from UDPSERVER import start_multicast_server
 from UDPSERVER import start_unicast_server
 from UDPClient import SendMyIP
@@ -48,6 +49,12 @@ TOPIC_PONG = f"healthcheck@{clinic_id}/IAMALIVE"
 
 camera_result = mp.Manager().dict()
 polar_result = mp.Manager().dict()
+
+
+def start_broadcast_process():
+    p = mp.Process(target=broadcast_ip)
+    p.start()
+    return p
 
 def reorder_exercises2(session):
     group_definitions = {
@@ -844,8 +851,12 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_KEEP_ALIVE_INTERVAL)
 
-client_process = mp.Process(target=SendMyIP, args=())
-client_process.start()
+#client_process = mp.Process(target=SendMyIP, args=())
+#client_process.start()
+
+
+process = start_broadcast_process()
+
 
 # Publish loop
 def publish_loop():
